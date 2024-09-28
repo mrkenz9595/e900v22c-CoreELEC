@@ -34,3 +34,28 @@ jobs:
           path: |
             CoreELEC-Amlogic-ng.arm-*.img.gz
             CoreELEC-Amlogic-ng.arm-*.img.gz.sha256
+
+      - name: Get version
+        id: get_version
+        run: |
+          version=$(grep 'version=' build.sh | cut -d'"' -f2)
+          echo "VERSION=${version}" >> $GITHUB_ENV
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+          release_name: "CoreELEC Release ${{ env.VERSION }}"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
